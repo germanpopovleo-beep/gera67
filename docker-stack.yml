@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  web:
+    image: flask-app:secure
+    ports:
+      - "5000:5000"
+    environment:
+      - APP_ENV=production
+      - SECRET_KEY=swarm_secret
+    deploy:
+      replicas: 1
+      update_config:
+        parallelism: 1
+        delay: 5s
+      restart_policy:
+        condition: on-failure
+
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: pass
+      POSTGRES_DB: mydb
+    volumes:
+      - pgdata_swarm:/var/lib/postgresql/data
+
+volumes:
+  pgdata_swarm:
